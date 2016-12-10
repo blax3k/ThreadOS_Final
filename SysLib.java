@@ -71,6 +71,34 @@ public class SysLib {
         return Kernel.interrupt((int)1, (int)12, (int)0, (Object)null);
     }
 
+    public static int format(int fd) {
+        return Kernel.interrupt((int)1, (int)18, (int)fd, (Object)null);
+    }
+    
+    public static int open(String fileName, String permission) {
+        return Kernel.interrupt((int)1, (int)18, (int)1, (Object)null);
+    }
+    
+    public static int close(int files) {
+        return Kernel.interrupt((int)1, (int)18, (int)files, (Object)null);
+    }
+      
+    public static int write(int fd, byte[] buffer) {
+        return Kernel.interrupt((int)1, (int)18, (int)1, (Object)null);
+    } 
+       
+    public static int read(int fd, byte[] tmpBuf) {
+        return Kernel.interrupt((int)1, (int)18, (int)1, (Object)null);
+    }
+    
+    public static int seek(int fd, int offset, int whence) {
+        return Kernel.interrupt((int)1, (int)18, (int)1, (Object)null);
+    }
+    
+    public static int delete(String fileName) {
+        return Kernel.interrupt((int)1, (int)18, (int)1, (Object)null);
+    }
+    
     public static String[] stringToArgs(String string) {
         StringTokenizer stringTokenizer = new StringTokenizer(string, " ");
         String[] arrstring = new String[stringTokenizer.countTokens()];

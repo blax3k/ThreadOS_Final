@@ -192,22 +192,28 @@ case INTERRUPT_SOFTWARE: // System calls
     case CWRITE:  // to be implemented in assignment 4
     return cache.write( param, ( byte[] )args ) ? OK : ERROR;
     case CSYNC:   // to be implemented in assignment 4
-    cache.sync( );
+        cache.sync( );
     return OK;
     case CFLUSH:  // to be implemented in assignment 4
-    cache.flush( );
+        cache.flush( );
     return OK;
     case OPEN:    // to be implemented in project
+        
     return OK;
     case CLOSE:   // to be implemented in project
+        
     return OK;
     case SIZE:    // to be implemented in project
+        
     return OK;
     case SEEK:    // to be implemented in project
+        
     return OK;
     case FORMAT:  // to be implemented in project
+        
     return OK;
     case DELETE:  // to be implemented in project
+        
     return OK;
     }
     return ERROR;

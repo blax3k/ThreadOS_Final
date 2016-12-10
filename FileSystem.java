@@ -1,5 +1,5 @@
 public class FileSystem{
-private SuperBlock superblock;
+private Superblock superblock;
 private Directory directory;
 private FileTable filetable;
 
