@@ -76,27 +76,27 @@ public class SysLib {
     }
     
     public static int open(String fileName, String permission) {
-        return Kernel.interrupt((int)1, (int)18, (int)1, (Object)null);
+        return Kernel.interrupt((int)1, (int)14, (int)1, (Object)null);
     }
     
     public static int close(int files) {
-        return Kernel.interrupt((int)1, (int)18, (int)files, (Object)null);
+        return Kernel.interrupt((int)1, (int)15, (int)files, (Object)null);
     }
       
     public static int write(int fd, byte[] buffer) {
-        return Kernel.interrupt((int)1, (int)18, (int)1, (Object)null);
+        return Kernel.interrupt((int)1, (int)9, (int)1, (Object)null);
     } 
        
     public static int read(int fd, byte[] tmpBuf) {
-        return Kernel.interrupt((int)1, (int)18, (int)1, (Object)null);
+        return Kernel.interrupt((int)1, (int)8, (int)1, (Object)null);
     }
     
     public static int seek(int fd, int offset, int whence) {
-        return Kernel.interrupt((int)1, (int)18, (int)1, (Object)null);
+        return Kernel.interrupt((int)1, (int)17, (int)1, (Object)null);
     }
     
     public static int delete(String fileName) {
-        return Kernel.interrupt((int)1, (int)18, (int)1, (Object)null);
+        return Kernel.interrupt((int)1, (int)19, (int)1, (Object)null);
     }
     
     public static String[] stringToArgs(String string) {
