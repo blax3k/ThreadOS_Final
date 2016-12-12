@@ -14,4 +14,6 @@ public class FileTableEntry {          // Each table entry should have
       if ( mode.compareTo( "a" ) == 0 ) // if mode is append,
          seekPtr = inode.length;        // seekPtr points to the end of file
    }
-
+   
+   
+}

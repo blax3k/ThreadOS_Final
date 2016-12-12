@@ -55,6 +55,7 @@ public final static int ERROR = -1;
 private static Scheduler scheduler;
 private static Disk disk;
 private static Cache cache;
+private static FileSystem fs;
 
 // Synchronized Queues
 private static SyncQueue waitQueue;  // for threads to wait for their child
@@ -66,6 +67,8 @@ private final static int COND_DISK_FIN = 2; // wait condition
 // Standard input
 private static BufferedReader input
 = new BufferedReader( new InputStreamReader( System.in ) );
+
+// the file system
 
 // The heart of Kernel
 public static int interrupt( int irq, int cmd, int param, Object args ) {
