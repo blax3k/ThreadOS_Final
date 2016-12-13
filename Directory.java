@@ -46,6 +46,7 @@ public class Directory {
 
    public short namei( String filename ) {
       // returns the inumber corresponding to this filename
+       //returns -1 if there is no corresponding filename
        return 0;
    }
 }
