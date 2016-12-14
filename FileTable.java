@@ -78,7 +78,7 @@ public class FileTable {
         }
         //table contains file
         table.removeElement(e); //remove entry from table
-        e.inode.count --;       //decrement the inode count
+        e.inode.count--;       //decrement the inode count
         e.inode.toDisk(e.iNumber);  //write inode to disk
         return true;        //return success
     }
