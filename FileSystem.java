@@ -18,7 +18,15 @@ public class FileSystem{
 		close(dirEnt); 
 	}
 	
+	//------------sync()--------------
+	// Sync file system back to disk
 	void sync(){
+		FileTableEntry root = open("/", "w");
+		write(root, directory.directory2bytes());
+		
+		close(root);
+		
+		superblock.sync();
 	}
 
  	int read(FileTableEntry ftEnt, byte[] buffer) {
@@ -51,9 +59,20 @@ public class FileSystem{
     		return result;
 	}
 
+	//---------------close()----------------
+	// Closes a file passed in. Returns true on success
+	// and returns false otherwise.
 	public boolean close(FileTableEntry fte)
 	{
-    		return true;
+    		synchronized(fte){
+			fte.count--;
+			
+			if(fte.count == 0){
+				return filetable.ffree(fte);
+			}else{
+				return true;
+			}
+		}
 	}
 
 	public int fsize(FileTableEntry entry)
