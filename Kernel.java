@@ -69,7 +69,8 @@ private static BufferedReader input
 = new BufferedReader( new InputStreamReader( System.in ) );
 
 // the file system
-
+fs = new FileSystem(1000);
+  
 // The heart of Kernel
 public static int interrupt( int irq, int cmd, int param, Object args ) {
 TCB myTcb;
