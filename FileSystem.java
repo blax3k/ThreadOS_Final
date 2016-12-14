@@ -28,9 +28,26 @@ public class FileSystem{
 	int write(FileTableEntry ftEnt, byte[] buffer){
 	}
  
+	//----------------open()------------------------
+	// Opens the file of the filename string passed in along
+	// with the mode that the file is opened in: r, w, w+, a
+	// Returns the resulting filetableentry object
 	public FileTableEntry open(String variable1, String variable2)
 	{
     		FileTableEntry result = null;
+    		result = filetable.falloc(filename, mode);
+    		
+    		//write only: start from scratch
+    		if(mode == "w"){
+    			if(!deallocAllBlocks(result)){
+    				return null;
+    			}
+    		}
+    		//append: set seek to EOF
+    		else if(mode == "a"){
+    			seek(result, 0, SEEK_END);
+    		}
+    		
     		return result;
 	}
 
