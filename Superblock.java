@@ -45,7 +45,7 @@ public class Superblock {
 	// Set up block 0 to superblock with default values
 	// Free blocks are set up as a linked list with each
 	// block pointing to the next free block; last free block points to 0
-	private void format(int files) {
+	public void format(int files) {
 		totalInodes = files;
 		totalBlocks = defaultBlocks;
 		

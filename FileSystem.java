@@ -73,8 +73,12 @@ public class FileSystem {
         return -1;
     }
 
-    public boolean format(int param)
+    public boolean format(int files)
     {
+        superblock.format(files); //format the superblock
+        directory = new Directory(superblock.totalInodes);
+        filetable = new FileTable(directory);
+        
         return true;
     }
 
