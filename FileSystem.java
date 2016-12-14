@@ -73,12 +73,20 @@ public class FileSystem {
         return -1;
     }
 
+    /*
+    formats the drive
+    */
     public boolean format(int files)
     {
+        //check for open files
+        if (!filetable.fempty())
+        {
+            return false; //all files must be closed in order to format
+        }
         superblock.format(files); //format the superblock
-        directory = new Directory(superblock.totalInodes);
-        filetable = new FileTable(directory);
-        
+        directory = new Directory(superblock.totalInodes); //make new directory
+        filetable = new FileTable(directory); //make new filetable
+
         return true;
     }
 
@@ -128,11 +136,29 @@ public class FileSystem {
                 inode.direct[i] = (short) INVALID;
             }
         }
+        
+        byte[] data;
+        if (ftEnt.inode.indirect >= 0)
+        {
+            data = new byte[512];
+            SysLib.rawread(ftEnt.inode.indirect, data);
+            ftEnt.inode.indirect = -1;
+        } else
+        {
+            data = null;
+            short blockId;
 
-        short indirectID = inode.getIndirect();
+            while ((blockId = SysLib.bytes2short(data, 0)) != -1)
+            {
+                superblock.returnBlock(blockId);
+            }
 
-        inode = ftEnt.
-            
+        }
+        //write inode back to disk
+        ftEnt.inode.toDisk(ftEnt.iNumber);
+        
+        return true;
+
     }
 
 }
