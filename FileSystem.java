@@ -114,6 +114,7 @@ public class FileSystem {
         //check for open files
         if (!filetable.fempty())
         {
+            SysLib.cerr("file table is not empty \n");
             return false; //all files must be closed in order to format
         }
         superblock.format(files); //format the superblock

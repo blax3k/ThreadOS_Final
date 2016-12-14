@@ -76,7 +76,10 @@ public class SysLib {
     }
     
     public static int open(String fileName, String permission) {
-        return Kernel.interrupt((int)1, (int)14, (int)1, (Object)null);
+        String[] args = new String[2];
+        args[0] = fileName;
+        args[1] = permission;
+        return Kernel.interrupt((int)1, (int)14, (int)1, (Object)args);
     }
     
     public static int close(int files) {
