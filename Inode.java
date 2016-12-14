@@ -10,7 +10,7 @@ public class Inode {
 	
 	public int length;		//file size in bytes
 	public short count;		//file-table entries
-	public short flag;		//0: unused, 1: used
+	public short flag;		//0: unused, 1: used 
 	public short direct[] = new short[directSize];
 	public short indirect;	//indrect ptr
 	

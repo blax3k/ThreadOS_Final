@@ -56,7 +56,6 @@ private static Scheduler scheduler;
 private static Disk disk;
 private static Cache cache;
 private static FileSystem fs;
-
 // Synchronized Queues
 private static SyncQueue waitQueue;  // for threads to wait for their child
 private static SyncQueue ioQueue;    // I/O queue
@@ -69,7 +68,7 @@ private static BufferedReader input
 = new BufferedReader( new InputStreamReader( System.in ) );
 
 // the file system
-fs = new FileSystem(1000);
+ fs = new FileSystem(1000);
   
 // The heart of Kernel
 public static int interrupt( int irq, int cmd, int param, Object args ) {

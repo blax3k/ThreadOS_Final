@@ -93,6 +93,9 @@ public class FileSystem {
         return true;
     }
 
+    /*
+    returns the size of the file
+    */
     public int fsize(FileTableEntry entry)
     {
         //return invalid if either file table entry or its inode are invalid
@@ -140,11 +143,41 @@ public class FileSystem {
     private final int SEEK_CUR = 1;
     private final int SEEK_END = 2;
 
-    public int seek(FileTableEntry entry, int seek, int seekArg)
+    public int seek(FileTableEntry entry, int offset, int seekArg)
     {
-        return INVALID;
+        int fileEnd = fsize(entry); //get the end of the file
+        int seekPointer = entry.seekPtr; //get the current seek pointer
+        
+        if(seekArg == SEEK_SET)
+        {
+            seekPointer = offset; //set to the offset
+        }else if(seekArg == SEEK_CUR)
+        {
+            seekPointer += offset; //add offset to current pointer
+        }else if(seekArg == SEEK_END)
+        {
+            seekPointer = fileEnd + offset; //add size of file to offset
+        }
+        else
+        {
+            return INVALID;
+        }
+        
+        if(seekPointer < 0)
+            seekPointer = 0;
+        else if(seekPointer > fileEnd)
+            seekPointer = fileEnd;
+        
+        //set entry seek pointer
+        entry.seekPtr = seekPointer;
+        
+        
+        return seekPointer;
     }
 
+    /*
+    deallocates all blocks within an inode
+    */
     private boolean deallocAllBlocks(FileTableEntry ftEnt)
     {
 
