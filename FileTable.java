@@ -63,6 +63,8 @@ public class FileTable {
         // return a reference to this file (structure) table entry
         return entry;
     }
+    
+ 
 
     public synchronized boolean ffree(FileTableEntry e)
     {
