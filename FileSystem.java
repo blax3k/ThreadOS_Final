@@ -145,7 +145,7 @@ public class FileSystem {
 
     public int seek(FileTableEntry entry, int offset, int seekArg)
     {
-        int fileEnd = fsize(entry); //get the end of the file
+        int fileEnd = entry.inode.length; //get the end of the file
         int seekPointer = entry.seekPtr; //get the current seek pointer
         
         if(seekArg == SEEK_SET)
