@@ -54,6 +54,10 @@ public class FileSystem{
     		return true;
 	}
 
+	private final int SEEK_SET = 0;
+	private final int SEEK_CUR = 1;
+	private final int SEEK_END = 2;
+	
 	public int seek(FileTableEntry entry, int seek, int seekArg)
 	{
     		return -1;
@@ -62,11 +66,8 @@ public class FileSystem{
 	private boolean deallocAllBlocks(FileTableEntry ftEnt){
 	}
 	
-	private final int SEEK_SET = 0;
-	private final int SEEK_CUR = 1;
-	private final int SEEK_END = 2;
+
 	
-	int seek(FileTableEntry ftEnt, int offset, int whence){
-	}
+
 
 }
