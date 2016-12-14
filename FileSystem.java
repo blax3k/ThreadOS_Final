@@ -95,8 +95,12 @@ public class FileSystem {
 
     public int fsize(FileTableEntry entry)
     {
-
-        return -1;
+        //return invalid if either file table entry or its inode are invalid
+        if(entry == null || entry.inode == null)
+            return INVALID;
+        
+        return entry.inode.length;
+        
     }
 
     /*
@@ -124,7 +128,7 @@ public class FileSystem {
     {
         FileTableEntry fte = open(file, "w");
         //make sure filename isn't blank and inumber isn't invalid
-        if (file.equals("") || fte.iNumber == -1)
+        if (file.equals("") || fte.iNumber == INVALID)
         {
             return false;
         }
@@ -138,7 +142,7 @@ public class FileSystem {
 
     public int seek(FileTableEntry entry, int seek, int seekArg)
     {
-        return -1;
+        return INVALID;
     }
 
     private boolean deallocAllBlocks(FileTableEntry ftEnt)
@@ -168,13 +172,13 @@ public class FileSystem {
         {
             data = new byte[512];
             SysLib.rawread(ftEnt.inode.indirect, data);
-            ftEnt.inode.indirect = -1;
+            ftEnt.inode.indirect = (short)INVALID;
         } else
         {
             data = null;
             short blockId;
 
-            while ((blockId = SysLib.bytes2short(data, 0)) != -1)
+            while ((blockId = SysLib.bytes2short(data, 0)) != INVALID)
             {
                 superblock.returnBlock(blockId);
             }
