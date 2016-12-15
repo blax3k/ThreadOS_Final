@@ -60,7 +60,7 @@ public class FileSystem {
  		int currentBlock;
  		
 		//loop: ends when there is no more bytes to read
- 		while(ftEnt.seekPtr < fsize(ftEnt) && (total > 0)){
+ 		while(ftEnt.seekPtr < fSize(ftEnt) && (total > 0)){
  			int target = ftEnt.seekPtr / 512;
  			
 			//if less than 11, it's an direct access
