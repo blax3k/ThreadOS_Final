@@ -23,7 +23,7 @@ public class FileSystem {
         close(dirEnt);
     }
 
-	//------------sync()--------------
+    //------------sync()--------------
     // Sync file system back to disk
     void sync()
     {
@@ -35,9 +35,75 @@ public class FileSystem {
         superblock.sync();
     }
 
+//---------------read()-----------------
+// Reads the file specified by the file entry into buffer
+// Reads block based on data size, amount read determined 
+// by buffer size. Returns number of bytes read, or error(-1)
     int read(FileTableEntry ftEnt, byte[] buffer)
     {
-        return 0;
+ 	//cannot read on "write only" or "append"
+ 	if(ftEnt.mode == "w" || ftEnt.mode == "a"){
+ 		return -1;
+ 	}
+ 		
+ 	//read up to buffer's length
+ 	int total = buffer.length;
+ 	//total bytes read
+ 	int bytesRead = 0;
+ 	//how much is left to be read
+ 	int readsLeft = 0;
+ 		
+ 	synchronized(ftEnt){
+ 		int currentBlock;
+ 			
+ 		while(ftEnt.seekPtr < fSize(ftEnt) && (total > 0)){
+ 			int target = ftEnt.seekPtr / 512;
+ 				
+ 			if(target < 11){
+ 				currentBlock = ftEnt.inode.direct[target];
+ 			}
+ 				
+ 			else if(ftEnt.inode.indirect < 0){
+ 				currentBlock = -1;
+ 			}
+ 				
+ 			else{
+ 				byte[] data = new byte[512];
+ 	 			SysLib.rawread(ftEnt.inode.indirect, data);
+ 	 			int block = (target - 11) * 2;
+ 	 			currentBlock = SysLib.bytes2int(data, block);
+ 			}
+ 				
+ 			if(currentBlock == -1){
+ 				break;
+ 			}
+ 				
+ 			byte[] data = new byte[512];
+ 			SysLib.rawread(currentBlock, data);
+ 				
+ 			int offset = ftEnt.seekPtr % 512;
+ 			int blocksLeft = 512 - readsLeft;
+ 			int filesLeft = fsize(ftEnt) - ftEnt.seekPtr;
+ 				
+ 			if(blocksLeft < filesLeft){
+ 				readsLeft = blocksLeft;
+ 			}
+ 			else{
+ 				readsLeft = filesLeft;
+ 			}
+ 				
+ 			if(readsLeft > total){
+ 				readsLeft = total;
+ 			}
+ 				
+ 			System.arraycopy(data, offset, buffer, bytesRead, readsLeft);
+ 			bytesRead += readsLeft;
+ 			ftEnt.seekPtr += readsLeft;
+ 			total -= readsLeft;
+ 		}
+ 	}
+ 		
+	return bytesRead;
     }
 
     int write(FileTableEntry ftEnt, byte[] buffer)
