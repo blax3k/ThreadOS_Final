@@ -61,7 +61,7 @@ public class FileSystem {
  		
 		//loop: ends when there is no more bytes to read
 		//if bytes remain between seek ptr and EOF & < total
- 		while(ftEnt.seekPtr < fSize(ftEnt) && (total > 0)){
+ 		while(ftEnt.seekPtr < fsize(ftEnt) && (total > 0)){
 			int currentBlock;
 			
  			int target = ftEnt.seekPtr / 512;
