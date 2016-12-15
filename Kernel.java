@@ -213,6 +213,14 @@ public class Kernel {
                                 System.err.print((String) args);
                                 break;
                         }
+                        if ((myTcb = scheduler.getMyTcb()) != null)
+                        {
+                            FileTableEntry ftEnt = myTcb.getFtEnt(param);
+                            if(ftEnt != null)
+                            {
+                                return fs.write(ftEnt, (byte[])args);                                
+                            }
+                        }
                         return OK;
                     case CREAD:   // to be implemented in assignment 4
                         return cache.read(param, (byte[]) args) ? OK : ERROR;

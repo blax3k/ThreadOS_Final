@@ -99,7 +99,7 @@ public class SysLib {
     }
     
     public static int delete(String fileName) {
-        return Kernel.interrupt((int)1, (int)19, (int)1, (Object)null);
+        return Kernel.interrupt((int)1, (int)19, (int)1, (Object)fileName);
     }
     
     public static String[] stringToArgs(String string) {
