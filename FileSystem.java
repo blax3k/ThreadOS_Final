@@ -110,7 +110,9 @@ public class FileSystem {
 			//increment/decrement count
  			System.arraycopy(data, offset, buffer, bytesRead, readsLeft);
  			bytesRead += readsLeft;
- 			ftEnt.seekPtr += readsLeft;
+			
+			//increment seek ptr by bytes read
+ 			ftEnt.seekPtr += bytesRead;
  			total -= readsLeft;
  		} //end of while loop
 		
