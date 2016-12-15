@@ -70,6 +70,7 @@ public class FileSystem {
  			if(target < 11){
  				currentBlock = ftEnt.inode.direct[target];
  			}
+			
  			//indirect access
  			else if(ftEnt.inode.indirect < 0){
  				currentBlock = -1;
@@ -79,7 +80,7 @@ public class FileSystem {
  				byte[] data = new byte[512];
  	 			SysLib.rawread(ftEnt.inode.indirect, data);
  	 			int block = (target - 11) * 2;
- 	 			currentBlock = SysLib.bytes2int(data, block);
+ 	 			currentBlock = SysLib.bytes2short(data, block);
  			}
 			
  			//block is empty!	
