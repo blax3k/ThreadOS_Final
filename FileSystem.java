@@ -6,6 +6,7 @@ public class FileSystem {
 
     public static int INVALID = -1;
 
+    //constructor for file system
     public FileSystem(int diskBlocks)
     {
         superblock = new Superblock(diskBlocks);
@@ -24,14 +25,16 @@ public class FileSystem {
     }
 
     //------------sync()--------------
-    // Sync file system back to disk
+    // Sync file system back to disk for setup
     void sync()
     {
+	//initialize root directory "/", write-only mode
         FileTableEntry root = open("/", "w");
         write(root, directory.directory2bytes());
-
+	
+	//close root
         close(root);
-
+	//synce superblock
         superblock.sync();
     }
 
@@ -55,14 +58,16 @@ public class FileSystem {
  		
  	synchronized(ftEnt){
  		int currentBlock;
- 			
+ 		
+		//loop: ends when there is no more bytes to read
  		while(ftEnt.seekPtr < fSize(ftEnt) && (total > 0)){
  			int target = ftEnt.seekPtr / 512;
- 				
+ 			
+			//if less than 11, it's an direct access
  			if(target < 11){
  				currentBlock = ftEnt.inode.direct[target];
  			}
- 				
+ 			//indirect access
  			else if(ftEnt.inode.indirect < 0){
  				currentBlock = -1;
  			}
@@ -73,18 +78,21 @@ public class FileSystem {
  	 			int block = (target - 11) * 2;
  	 			currentBlock = SysLib.bytes2int(data, block);
  			}
- 				
+			
+ 			//block is empty!	
  			if(currentBlock == -1){
  				break;
  			}
- 				
+			
+ 			//read data of current block	
  			byte[] data = new byte[512];
  			SysLib.rawread(currentBlock, data);
- 				
+ 			
+			//calculations
  			int offset = ftEnt.seekPtr % 512;
  			int blocksLeft = 512 - readsLeft;
  			int filesLeft = fsize(ftEnt) - ftEnt.seekPtr;
- 				
+ 			
  			if(blocksLeft < filesLeft){
  				readsLeft = blocksLeft;
  			}
@@ -95,20 +103,107 @@ public class FileSystem {
  			if(readsLeft > total){
  				readsLeft = total;
  			}
- 				
+ 			
+			//increment/decrement count
  			System.arraycopy(data, offset, buffer, bytesRead, readsLeft);
  			bytesRead += readsLeft;
  			ftEnt.seekPtr += readsLeft;
  			total -= readsLeft;
- 		}
+ 		} //end of while loop
+		
+		return bytesRead;
  	}
- 		
-	return bytesRead;
     }
 
+	 //--------------------write()----------------------
+ 	// Writes contents of buffer to file entry starting from seekptr
+ 	// Returns number of bytes written, returns -1 on error
     int write(FileTableEntry ftEnt, byte[] buffer)
     {
-        return 0;
+	//illegal modes
+	if(ftEnt == null || ftEnt.mode == "r"){
+		return -1;
+	}
+		
+	//variables
+	int bytesWritten = 0;
+	int total = buffer.length;
+		
+	synchronized(ftEnt){
+		int location;
+		
+		//loop: ends when there is no more bytes to write
+		while(total > 0){
+			//find file's block
+			int target = ftEnt.seekPtr / 512;
+			if(target < 11){
+				location = ftEnt.inode.direct[target];
+			}
+			else if(ftEnt.inode.indirect < 0){
+				location = -1;
+			}
+			else{
+				byte[] data = new byte[512];
+				SysLib.rawread(ftEnt.inode.indirect, data);
+				int temp = (target - 11) * 2;
+				location = SysLib.bytes2int(data, temp);
+			}
+				
+			//if block found was null
+			if(location == -1){
+				//write to next free block
+				short newLocation = (short) superblock.nextFreeBlock();
+					
+				//get indirect #
+				int testIndirect = ftEnt.inode.getIndirect();
+					
+				//empty indirect pointer
+				if(testIndirect < 0){
+					return -1;
+				}
+					
+				//set new location
+				location = newLocation;
+			}
+				
+			//read location into temp buffer
+			byte[] temp = new byte[512];
+			SysLib.rawread(location, temp);
+				
+			//calculations
+			int tempPtr = ftEnt.seekPtr % 512;
+			int diff = 512 - tempPtr;
+				
+			//write
+			if(diff > 512){
+				System.arraycopy(buffer, bytesWritten, temp, tempPtr, 512);
+				SysLib.rawwrite(location, temp);
+					
+				ftEnt.seekPtr += total;
+				bytesWritten += total;
+				total = 0;	//finished
+			}
+			else{
+				System.arraycopy(buffer, bytesWritten, temp, tempPtr, diff);
+				SysLib.rawwrite(location, temp);
+					
+				ftEnt.seekPtr += total;
+				bytesWritten += total;
+				total -= diff;	//decrement
+			}
+				
+		} //end of while loop
+			
+		//update inode
+		if(ftEnt.seekPtr > ftEnt.inode.length){
+			ftEnt.inode.length = ftEnt.seekPtr;
+		}
+		//write back to disk
+		ftEnt.inode.toDisk(ftEnt.iNumber);
+			
+		//return total bytes written
+		return bytesWritten;
+	}
     }
 
 
@@ -136,10 +231,10 @@ public class FileSystem {
 
         return result;
     }
+	
     /*
      closes the file table entry in filetable
      */
-
     public boolean close(FileTableEntry fte)
     {
         Inode inode;
