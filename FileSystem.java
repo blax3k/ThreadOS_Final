@@ -57,10 +57,13 @@ public class FileSystem {
  	int readsLeft = 0;
  		
  	synchronized(ftEnt){
- 		int currentBlock;
+ 		
  		
 		//loop: ends when there is no more bytes to read
+		//if bytes remain between seek ptr and EOF & < total
  		while(ftEnt.seekPtr < fSize(ftEnt) && (total > 0)){
+			int currentBlock;
+			
  			int target = ftEnt.seekPtr / 512;
  			
 			//if less than 11, it's an direct access
@@ -130,10 +133,12 @@ public class FileSystem {
 	int total = buffer.length;
 		
 	synchronized(ftEnt){
-		int location;
+		
 		
 		//loop: ends when there is no more bytes to write
 		while(total > 0){
+			int location;
+			
 			//find file's block
 			int target = ftEnt.seekPtr / 512;
 			if(target < 11){
