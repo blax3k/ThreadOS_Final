@@ -1,4 +1,9 @@
-
+/*
+Blake Hashimoto
+CSS 430 Operating Systems
+14 December, 2016
+Professor Erika Parsons
+*/
 
 public class Directory {
    private static int maxChars = 30; // max characters of each file name

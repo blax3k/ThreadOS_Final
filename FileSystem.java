@@ -1,3 +1,11 @@
+/*
+FileSystem.java
+
+Blake Hashimoto & Randy Hang
+CSS 430 Operating Systems
+14 December, 2016
+Professor Erika Parsons
+*/
 
 public class FileSystem {
     private Superblock superblock;
@@ -13,15 +21,15 @@ public class FileSystem {
         directory = new Directory(superblock.totalInodes);
         filetable = new FileTable(directory);
 
-        FileTableEntry dirEnt = open("/", "r");
-        int dirSize = fsize(dirEnt);
-        if (dirSize > 0)
-        {
-            byte[] dirData = new byte[dirSize];
-            read(dirEnt, dirData);
-            directory.bytes2directory(dirData);
-        }
-        close(dirEnt);
+//        FileTableEntry dirEnt = open("/", "r");
+//        int dirSize = fsize(dirEnt);
+//        if (dirSize > 0)
+//        {
+//            byte[] dirData = new byte[dirSize];
+//            read(dirEnt, dirData);
+//            directory.bytes2directory(dirData);
+//        }
+//        close(dirEnt);
     }
 
     //------------sync()--------------
@@ -301,7 +309,7 @@ public class FileSystem {
     {
         FileTableEntry fte = open(file, "w");
         //make sure filename isn't blank and inumber isn't invalid
-        if (file.equals("") || fte.iNumber == INVALID)
+        if (file.equals("") || fte == null || fte.iNumber == INVALID)
         {
             return false;
         }

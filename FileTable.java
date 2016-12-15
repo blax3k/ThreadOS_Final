@@ -1,6 +1,15 @@
 
 import java.util.Vector;
 
+/*
+FileTable.java
+
+Blake Hashimoto
+CSS 430 Operating Systems
+14 December, 2016
+Professor Erika Parsons
+*/
+
 public class FileTable {
 
     private Vector table;         // the actual entity of this file table
@@ -17,58 +26,54 @@ public class FileTable {
     {
         short inumber = -1; //retrieve the inumber
         Inode inode = null;
-        while (true)
+
+        if (filename.equals("/")) //blank filename
         {
-            if (filename.equals("/")) //blank filename
-            {
-                inumber = 0;
-            } else
-            {
-                inumber = dir.namei(filename); //get inumber from direcotry
+            inumber = 0;
+        } else
+        {
+            inumber = dir.namei(filename);
+        }
+        if (inumber < 0) //empty inode found
+        {   //file doesn't exist and is in read only
+            if (mode.equals("r"))    //file is read only 
+            {   //invalid read
+                return null;
             }
-            if (inumber < 0) //empty inode found
-            {   //file doesn't exist and is in read only
-                if (mode.equals("r"))    //if file is read only 
-                {
-                    return null; //do not allocate
-                }
-                else if((inumber = dir.ialloc(filename)) < 0)
-                    return null;
-                
-                inode = new Inode();
-                break;
-            }
-            //file does exist
-            inode = new Inode(inumber);
-            if(inode.flag == Inode.DELETE)
-                return null; //can't open more
-            if(inode.flag == Inode.UNUSED || inode.flag == Inode.USED)
-                break; //waiting is not required
-            
-            try{
-                wait();
-            } catch(Exception e)
+            else if(mode.equals("w") || mode.equals("w+") || mode.equals("a"))
             {
+                //allocate inode in directory
+                inumber = dir.ialloc(filename);
+                inode = new Inode(); //create new default Inode
+                inode.flag = 1;     //set inode flag
+            }
+            else
+            {   //encountered error
+                return null;
             }
         }
-        
-            // increment this inode's count
-            inode.count++;
-            // immediately write back this inode to the disk
-            inode.toDisk(inumber);
+        inode = new Inode(inumber);
+        inode.flag = 1;
 
-            // allocate a new file (structure) table entry for this file name
-            FileTableEntry entry = new FileTableEntry(inode, inumber, mode);
+        // allocate/retrieve and register the corresponding inode using dir       
+        dir.ialloc(filename); //allocate space in the directory
 
-            //add file table entry to the table
-            table.add(entry);
+        // increment this inode's count
+        inode.count++;
+        // immediately write back this inode to the disk
+        inode.toDisk(inumber);
 
-            // return a reference to this file (structure) table entry
-            return entry;
-        
+        // allocate a new file (structure) table entry for this file name
+        FileTableEntry entry = new FileTableEntry(inode, inumber, mode);
+
+        //add file table entry to the table
+        table.add(entry);
+
+        // return a reference to this file (structure) table entry
+        return entry;
     }
-
     
+ 
 
     public synchronized boolean ffree(FileTableEntry e)
     {
@@ -76,9 +81,9 @@ public class FileTable {
         // save the corresponding inode to the disk
         // free this file table entry.
         // return true if this file table entry found in my table
-
+        
         //make sure table contains file
-        if (!table.contains(e))
+        if(!table.contains(e))
         {   //table does not have the file
             return false;
         }

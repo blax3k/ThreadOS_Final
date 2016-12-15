@@ -32,7 +32,6 @@ public class Inode {
 	//parameterized constructor
 	//retrieving inode from disk
 	Inode(short iNumber){
-		
 		//obtain corresponding disk block
 		int blockNum = 1 + iNumber / totalInodes;
 		
@@ -58,6 +57,7 @@ public class Inode {
 		
 		//get indirect pointer
 		indirect = SysLib.bytes2short(data, offset);
+                offset += 2;
 	}
 	
 	// ----------------toDisk()----------------
