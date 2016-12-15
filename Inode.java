@@ -7,10 +7,13 @@ public class Inode {
 	private static final int directSize = 11;	//direct ptrs
 	private static final int totalInodes = 16;	//inodes per block
 	private static final int defaultBlockSize = 512;	//bytes
+        public static final int DELETE = 2;
+        public static final int USED = 1;
+        public static final int UNUSED = 0;
 	
 	public int length;		//file size in bytes
 	public short count;		//file-table entries
-	public short flag;		//0: unused, 1: used 
+	public short flag;		//0: unused, 1: used 2: delete
 	public short direct[] = new short[directSize];
 	public short indirect;	//indrect ptr
 	
@@ -18,7 +21,7 @@ public class Inode {
 	Inode(){
 		length = 0;
 		count = 0;
-		flag = 1;
+		flag = USED;
 		
 		for(int i = 0; i < directSize; i++){
 			direct[i] = -1;
